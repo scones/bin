@@ -1,0 +1,42 @@
+#!/usr/bin/bash
+
+# if not empty, grab from current branch
+if [ -z "$BRANCH"]; then
+  BRANCH=`git symbolic-ref HEAD | sed -e "s/refs\\/heads\\///"`
+fi
+
+# if not empty it will be "origin" by default
+if [ -z "$REMOTE"]; then
+  REMOTE="origin"
+fi
+
+# check that the branch was found
+if [ -z "$BRANCH" ]; then
+  echo "No branch found."
+  exit 1;
+fi
+
+# check for a local reference of the branch
+LOCAL_REF=`git show-ref heads/$BRANCH`
+if [ -z "$LOCAL_REF" ]; then
+  echo "No local branch '$BRANCH' exists."
+  exit 1;
+fi
+
+# check for a remote reference
+REMOTE_REF=`git show-ref remotes/$REMOTE/$BRANCH`
+if [ -n "$REMOTE_REF" ]; then
+  echo "Remote branch '$BRANCH' already exists: $REMOTE_REF"
+  exit 1;
+fi 
+
+# check for a configured tracking branch
+REMOTE_CONFIG=`git config branch.$BRANCH.merge`
+if [ -n "$REMOTE_CONFIG" ]; then
+  echo "local branch '$BRANCH' is already tracking a branch!"
+  exit 1;
+fi
+
+
+RESULT=`git push -u $REMOTE $BRANCH`
+
