@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c8; echo ""
+</dev/urandom tr -dc '1234567890_.-qwertzuiopasdfghjklyxcvbnm' | head -c8; echo ""
 
